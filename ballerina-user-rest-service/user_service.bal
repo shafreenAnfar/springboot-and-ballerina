@@ -37,6 +37,12 @@ service /medium on userListener {
         return http:CREATED;
     }
 
+    resource function delete users/[int id]() returns http:NoContent|error {
+        _ = check self.userDb->execute(`
+            DELETE FROM USER_DETAILS WHERE ID = ${id};`);
+        return http:NO_CONTENT;
+    }
+
     resource function get users/[int id]/posts() returns Post[]|UserNotFoundError|error {
         User|error result = self.userDb->queryRow(`SELECT * FROM USER_DETAILS WHERE ID = ${id}`);
         if result is sql:NoRowsError {

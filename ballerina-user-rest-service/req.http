@@ -1,4 +1,4 @@
-GET http://localhost:9090/dept/users
+GET http://localhost:9090/medium/users
 
 ###
 GET http://localhost:8080/jpa/users/10012
@@ -23,3 +23,6 @@ content-type: application/json
 {
     "description": "I wang to learn GCP"
 }
+
+###
+DELETE http://localhost:9090/medium/users/1

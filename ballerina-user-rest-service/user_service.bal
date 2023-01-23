@@ -7,7 +7,7 @@ listener http:Listener userListener = new (9090,
     interceptors = [new ResponseErrorInterceptor()]
 );
 
-service /dept on userListener {
+service /medium on userListener {
 
     final jdbc:Client userDb;
 

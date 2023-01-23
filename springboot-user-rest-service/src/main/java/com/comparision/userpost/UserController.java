@@ -10,23 +10,23 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-public class UserJpaResource {
+public class UserController {
 
     private UserDaoService service;
     private UserRepository repository;
     private PostRepository postRepository;
 
-    public UserJpaResource(UserDaoService service, UserRepository repository) {
+    public UserController(UserDaoService service, UserRepository repository) {
         this.service = service;
         this.repository = repository;
     }
 
-    @GetMapping("/jpa/users")
+    @GetMapping("/medium/users")
     public List<User> retrieveAllUsers() {
         return repository.findAll();
     }
 
-    @GetMapping("/jpa/users/{id}")
+    @GetMapping("/medium/users/{id}")
     public User retrieveUser(@PathVariable int id) {
         Optional<User> user = repository.findById(id);
 
@@ -36,7 +36,7 @@ public class UserJpaResource {
         return user.get();
     }
 
-    @GetMapping("/jpa/users/{id}/posts")
+    @GetMapping("/medium/users/{id}/posts")
     public List<Post> retrieveUserPosts(@PathVariable int id) {
         Optional<User> user = repository.findById(id);
 
@@ -46,7 +46,7 @@ public class UserJpaResource {
         return user.get().getPosts();
     }
 
-    @PostMapping("/jpa/users")
+    @PostMapping("/medium/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         User savedUser = repository.save(user);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -56,12 +56,12 @@ public class UserJpaResource {
         return ResponseEntity.created(location).build();
     }
 
-    @DeleteMapping("/jpa/users/{id}")
+    @DeleteMapping("/medium/users/{id}")
     public void deleteUser(@PathVariable int id) {
         repository.deleteById(id);
     }
 
-    @PostMapping("/jpa/users/{id}/post")
+    @PostMapping("/medium/users/{id}/post")
     public ResponseEntity<User> createUserPost(@PathVariable int id, @Valid @RequestBody Post post) {
         Optional<User> user = repository.findById(id);
 

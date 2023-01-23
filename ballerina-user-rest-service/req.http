@@ -1,0 +1,25 @@
+GET http://localhost:9090/dept/users
+
+###
+GET http://localhost:8080/jpa/users/10012
+
+###
+POST http://localhost:9090/dept/users HTTP/1.1
+content-type: application/json
+
+{
+    "birthDate": {
+        "year": 1987,
+        "month": 02,
+        "day": 06
+    },
+    "name": "Rimas"
+}
+
+###
+POST http://localhost:9090/dept/users/3/posts HTTP/1.1
+content-type: application/json
+
+{
+    "description": "I wang to learn GCP"
+}

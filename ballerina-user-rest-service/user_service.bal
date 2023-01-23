@@ -12,7 +12,7 @@ service /medium on userListener {
     final jdbc:Client userDb;
 
     public function init() returns error? {
-        self.userDb = check new("jdbc:h2:file:~/testdb", "sa", ());
+        self.userDb = check new("jdbc:h2:file:./testdb", "sa", ());
     }
 
     resource function get users() returns User[]|error {

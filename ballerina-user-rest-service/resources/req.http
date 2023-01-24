@@ -4,7 +4,7 @@ GET http://localhost:9090/medium/users
 GET http://localhost:8080/medium/users/10012
 
 ###
-POST http://localhost:9090/medium/users HTTP/1.1
+POST http://localhost:9090/medium/users
 content-type: application/json
 
 {

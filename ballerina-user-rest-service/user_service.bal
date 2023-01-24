@@ -62,7 +62,7 @@ service /medium on userListener {
     # 
     # + id - The user ID for which posts are retrieved
     # + return - A list of posts or error message
-    resource function get users/[int id]/posts() returns Post[]|UserNotFoundError|error {
+    resource function get users/[int id]/posts() returns Post[]|error {
         User|error result = self.userDb->queryRow(`SELECT * FROM USER_DETAILS WHERE ID = ${id}`);
         if result is sql:NoRowsError {
             return error UserNotFoundError("id: " + id.toString());
@@ -78,7 +78,7 @@ service /medium on userListener {
     # 
     # + id - The user ID for which the post is created
     # + return - The created message or error message
-    resource function post users/[int id]/posts(@http:Payload NewPost newPost) returns http:Created|UserNotFoundError|error {
+    resource function post users/[int id]/posts(@http:Payload NewPost newPost) returns http:Created|error {
         User|error result = self.userDb->queryRow(`SELECT * FROM USER_DETAILS WHERE ID = ${id}`);
         if result is sql:NoRowsError {
             return error UserNotFoundError("id: " + id.toString());

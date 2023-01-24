@@ -14,12 +14,10 @@ import java.util.Optional;
 @RestController
 public class UserController {
 
-    private UserDaoService service;
     private UserRepository repository;
     private PostRepository postRepository;
 
-    public UserController(UserDaoService service, UserRepository repository) {
-        this.service = service;
+    public UserController(UserRepository repository) {
         this.repository = repository;
     }
 

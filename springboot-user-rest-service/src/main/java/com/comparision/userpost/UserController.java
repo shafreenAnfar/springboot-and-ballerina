@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -104,7 +103,6 @@ public class UserController {
 
         Sentiment sentiment = sentimentProxy.retrieveSentiment(new SentimentRequest(post.getDescription()));
         if (sentiment.getLabel().equalsIgnoreCase("neg") && configuration.isModerate()) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             throw new NegativeSentimentException("Negative sentiment detected");
         }
 

@@ -27,6 +27,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(NegativeSentimentException.class)
+    public final ResponseEntity<Object> handleNegativeSentimentException(Exception ex, WebRequest request) throws Exception {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDate.now(), ex.getMessage(), request.getDescription(false));
+        return new ResponseEntity(errorDetails, HttpStatus.FORBIDDEN);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDate.now(), ex.getMessage(), request.getDescription(false));

@@ -10,7 +10,7 @@ listener http:Listener userListener = new (9090,
     interceptors = [new ResponseErrorInterceptor()]
 );
 
-service /medium on userListener {
+service /social\-media on userListener {
 
     final jdbc:Client userDb;
     final http:Client sentimentEndpoint;

@@ -29,12 +29,12 @@ public class UserController {
         this.postRepository = postRepository;
     }
 
-    @GetMapping("/medium/users")
+    @GetMapping("/social-media/users")
     public List<User> retrieveAllUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping("/medium/users/{id}")
+    @GetMapping("/social-media/users/{id}")
     public User retrieveUser(@PathVariable int id) {
         Optional<User> user = userRepository.findById(id);
 
@@ -52,7 +52,7 @@ public class UserController {
                     content = { @Content(mediaType = "application/json",
                         schema = @Schema(implementation = ErrorDetails.class))})
     })
-    @PostMapping("/medium/users")
+    @PostMapping("/social-media/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         userRepository.save(user);
         return ResponseEntity.created(null).build();
@@ -61,7 +61,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Delete user")
     })
-    @DeleteMapping("/medium/users/{id}")
+    @DeleteMapping("/social-media/users/{id}")
     public void deleteUser(@PathVariable int id) {
         userRepository.deleteById(id);
     }
@@ -73,7 +73,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorDetails.class))})})
-    @GetMapping("/medium/users/{id}/posts")
+    @GetMapping("/social-media/users/{id}/posts")
     public List<Post> retrieveUserPosts(@PathVariable int id) {
         Optional<User> user = userRepository.findById(id);
 
@@ -94,7 +94,7 @@ public class UserController {
                     content = { @Content(mediaType = "application/json",
                         schema = @Schema(implementation = ErrorDetails.class))})
     })
-    @PostMapping("/medium/users/{id}/post")
+    @PostMapping("/social-media/users/{id}/post")
     public ResponseEntity<User> createUserPost(@PathVariable int id, @Valid @RequestBody Post post) {
         Optional<User> user = userRepository.findById(id);
 

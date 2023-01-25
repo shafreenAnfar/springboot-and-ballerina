@@ -1,7 +1,10 @@
 import ballerinax/java.jdbc;
 import ballerina/http;
 import ballerina/sql;
+import ballerina/mime;
 import ballerinax/mysql.driver as _;
+
+configurable boolean moderate = ?;
 
 listener http:Listener userListener = new (9090,
     interceptors = [new ResponseErrorInterceptor()]
@@ -10,9 +13,11 @@ listener http:Listener userListener = new (9090,
 service /medium on userListener {
 
     final jdbc:Client userDb;
+    final http:Client sentimentEndpoint;
 
     public function init() returns error? {
         self.userDb = check new("jdbc:h2:file:./resources/testdb", "sa", ());
+        self.sentimentEndpoint = check new("localhost:8088");
     }
     
     # Get all the users
@@ -82,6 +87,14 @@ service /medium on userListener {
         User|error result = self.userDb->queryRow(`SELECT * FROM USER_DETAILS WHERE ID = ${id}`);
         if result is sql:NoRowsError {
             return error UserNotFoundError("id: " + id.toString());
+        }
+
+        Sentiment sentiment = check self.sentimentEndpoint->/text\-processing/api/sentiment.post(
+            { text: newPost },
+            mediatype = mime:APPLICATION_FORM_URLENCODED
+        );
+        if sentiment.label == "neg" {
+            return error NegativeSentimentError("Negative sentiment detected");
         }
 
         _ = check self.userDb->execute(`

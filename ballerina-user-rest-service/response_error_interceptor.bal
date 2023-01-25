@@ -5,7 +5,8 @@ import ballerina/constraint;
 service class ResponseErrorInterceptor {
     *http:ResponseErrorInterceptor;
 
-    remote function interceptResponseError(error err) returns UserNotFound|UserBadRequest|UserInternalServerError {
+    remote function interceptResponseError(error err) 
+            returns UserNotFound|UserBadRequest|PostForbidden|UserInternalServerError {
         ErrorDetails errorDetails = {
             timeStamp: time:utcNow(), 
             message: err.message(), 
@@ -17,6 +18,11 @@ service class ResponseErrorInterceptor {
                 body: errorDetails
             };
             return userNotFound;
+        } else if err is NegativeSentimentError {
+            PostForbidden postForbidden = {
+                body: errorDetails
+            };
+            return postForbidden;
         } else if err is constraint:Error {
             UserBadRequest userBadRequest = {
                 body: errorDetails
@@ -37,7 +43,12 @@ type UserNotFound record {|
 |};
 
 type UserBadRequest record {|
-    *http:NotFound;
+    *http:BadRequest;
+    ErrorDetails body;
+|};
+
+type PostForbidden record {|
+    *http:Forbidden;
     ErrorDetails body;
 |};
 

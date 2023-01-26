@@ -17,7 +17,11 @@ service /social\-media on userListener {
 
     public function init() returns error? {
         self.userDb = check new("jdbc:h2:file:./resources/testdb", "sa", ());
-        self.sentimentEndpoint = check new("localhost:8088");
+        self.sentimentEndpoint = check new("localhost:8088", 
+            retryConfig = {
+                interval: 3
+            }
+        );
     }
     
     # Get all the users

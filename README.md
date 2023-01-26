@@ -4,9 +4,11 @@ A sample code base which touches key features of each technology. The sample is 
 
 Following are the features used for the implementation
 
+- Configuring verbs and URLs
 - Error handlers for sending customized error messages
 - Adding constraints/validations
 - OpenAPI specification for Generating API docs
 - Accessing database
 - Configurability
 - HTTP client 
+- Resiliency - Retry

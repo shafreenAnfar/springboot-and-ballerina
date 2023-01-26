@@ -1,5 +1,6 @@
 package com.comparision.userpost;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -95,6 +96,7 @@ public class UserController {
                         schema = @Schema(implementation = ErrorDetails.class))})
     })
     @PostMapping("/social-media/users/{id}/post")
+    @Retry(name="sentiment-api")
     public ResponseEntity<User> createUserPost(@PathVariable int id, @Valid @RequestBody Post post) {
         Optional<User> user = userRepository.findById(id);
 

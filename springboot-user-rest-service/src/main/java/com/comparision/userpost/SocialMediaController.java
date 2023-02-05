@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-public class UserController {
+public class SocialMediaController {
 
     private UserRepository userRepository;
     private PostRepository postRepository;
@@ -25,7 +25,7 @@ public class UserController {
     @Autowired
     private SentimentProxy sentimentProxy;
 
-    public UserController(UserRepository userRepository, PostRepository postRepository) {
+    public SocialMediaController(UserRepository userRepository, PostRepository postRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
     }

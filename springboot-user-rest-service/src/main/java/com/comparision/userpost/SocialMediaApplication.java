@@ -6,9 +6,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients
 @SpringBootApplication
-public class UserpostApplication {
+public class SocialMediaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UserpostApplication.class, args);
+		SpringApplication.run(SocialMediaApplication.class, args);
 	}
 }

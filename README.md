@@ -12,3 +12,4 @@ Following are the features used for the implementation
 6. Configurability
 7. HTTP client 
 8. Resiliency - Retry
+9. Docker image generation

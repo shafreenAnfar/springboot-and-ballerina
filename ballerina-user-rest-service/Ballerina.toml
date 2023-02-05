@@ -1,7 +1,7 @@
 [package]
-org = "admin"
-name = "restful_web_services_bal"
-version = "0.1.0"
+org = "com_comparision"
+name = "social_media"
+version = "0.0.1"
 distribution = "2201.3.1"
 
 [build-options]

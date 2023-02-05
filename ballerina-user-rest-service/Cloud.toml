@@ -1,0 +1,4 @@
+[container.image]
+repository="shafreen"
+name="ballerina-social_media"
+tag="v0.0.1"

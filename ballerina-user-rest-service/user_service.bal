@@ -1,8 +1,8 @@
-import ballerinax/java.jdbc;
 import ballerina/http;
 import ballerina/sql;
 import ballerina/mime;
 import ballerinax/mysql.driver as _;
+import ballerinax/mysql;
 
 configurable boolean moderate = ?;
 
@@ -12,11 +12,11 @@ listener http:Listener userListener = new (9090,
 
 service /social\-media on userListener {
 
-    final jdbc:Client userDb;
+    final mysql:Client userDb;
     final http:Client sentimentEndpoint;
 
     public function init() returns error? {
-        self.userDb = check new("jdbc:h2:file:./resources/testdb", "sa", ());
+        self.userDb = check new (host = "localhost", port = 3306, user = "root", password = "dummypassword");
         self.sentimentEndpoint = check new("localhost:8088", 
             retryConfig = {
                 interval: 3
@@ -28,7 +28,7 @@ service /social\-media on userListener {
     # 
     # + return - The list of users or error message
     resource function get users() returns User[]|error {
-        stream<User, sql:Error?> userStream = self.userDb->query(`SELECT * FROM USER_DETAILS`);
+        stream<User, sql:Error?> userStream = self.userDb->query(`SELECT * FROM social_media_database.user_details`);
         return from User user in userStream
             select user;
     }
@@ -38,7 +38,7 @@ service /social\-media on userListener {
     # + id - The user ID of the user to be retrived
     # + return - A specific user or error message
     resource function get users/[int id]() returns User|error {
-        User|error result = self.userDb->queryRow(`SELECT * FROM USER_DETAILS WHERE ID = ${id}`);
+        User|error result = self.userDb->queryRow(`SELECT * FROM social_media_database.user_details WHERE ID = ${id}`);
         if result is sql:NoRowsError {
             return error UserNotFoundError("id: " + id.toString());
         } else {
@@ -52,7 +52,7 @@ service /social\-media on userListener {
     # + return - The created message or error message
     resource function post users(@http:Payload NewUser newUser) returns http:Created|error {
         _ = check self.userDb->execute(`
-            INSERT INTO USER_DETAILS(BIRTH_DATE, NAME)
+            INSERT INTO social_media_database.user_details(birth_date, name)
             VALUES (${newUser.birthDate}, ${newUser.name});`);
         return http:CREATED;
     }
@@ -63,7 +63,7 @@ service /social\-media on userListener {
     # + return - The success message or error message
     resource function delete users/[int id]() returns http:NoContent|error {
         _ = check self.userDb->execute(`
-            DELETE FROM USER_DETAILS WHERE ID = ${id};`);
+            DELETE FROM social_media_database.user_details WHERE id = ${id};`);
         return http:NO_CONTENT;
     }
 
@@ -72,12 +72,12 @@ service /social\-media on userListener {
     # + id - The user ID for which posts are retrieved
     # + return - A list of posts or error message
     resource function get users/[int id]/posts() returns Post[]|error {
-        User|error result = self.userDb->queryRow(`SELECT * FROM USER_DETAILS WHERE ID = ${id}`);
+        User|error result = self.userDb->queryRow(`SELECT * FROM social_media_database.user_details WHERE id = ${id}`);
         if result is sql:NoRowsError {
             return error UserNotFoundError("id: " + id.toString());
         }
 
-        stream<Post, sql:Error?> postStream = self.userDb->query(`SELECT ID, DESCRIPTION FROM POST WHERE USER_ID = ${id}`);
+        stream<Post, sql:Error?> postStream = self.userDb->query(`SELECT id, description FROM social_media_database.post WHERE user_id = ${id}`);
         Post[]|error posts = from Post post in postStream
             select post;
         return posts;
@@ -88,7 +88,7 @@ service /social\-media on userListener {
     # + id - The user ID for which the post is created
     # + return - The created message or error message
     resource function post users/[int id]/posts(@http:Payload NewPost newPost) returns http:Created|error {
-        User|error result = self.userDb->queryRow(`SELECT * FROM USER_DETAILS WHERE ID = ${id}`);
+        User|error result = self.userDb->queryRow(`SELECT * FROM social_media_database.user_details WHERE id = ${id}`);
         if result is sql:NoRowsError {
             return error UserNotFoundError("id: " + id.toString());
         }
@@ -102,7 +102,7 @@ service /social\-media on userListener {
         }
 
         _ = check self.userDb->execute(`
-            INSERT INTO POST(DESCRIPTION, USER_ID)
+            INSERT INTO social_media_database.post(description, user_id)
             VALUES (${newPost.description}, ${id});`);
         return http:CREATED;
     }

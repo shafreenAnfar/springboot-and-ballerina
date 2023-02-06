@@ -2,7 +2,7 @@
 
 A sample code base which touches key features of each technology. The sample is based on a simple API written for a social-media site which has users and associated posts. Following is the high level component diagram.
 
-<img src="springboot-and-ballerina.png" alt="drawing" width='400'/>
+<img src="springboot-and-ballerina.png" alt="drawing" width='500'/>
 
 Following are the features used for the implementation
 

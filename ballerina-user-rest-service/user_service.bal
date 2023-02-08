@@ -3,6 +3,7 @@ import ballerina/sql;
 import ballerina/mime;
 import ballerinax/mysql.driver as _;
 import ballerinax/mysql;
+import ballerinax/jaeger as _;
 
 configurable boolean moderate = ?;
 configurable string database_user = ?;

@@ -15,3 +15,4 @@ Following are the features used for the implementation
 7. HTTP client 
 8. Resiliency - Retry
 9. Docker image generation
+10. Tracing (Couldn’t get it to work with Spring boot Feign client)

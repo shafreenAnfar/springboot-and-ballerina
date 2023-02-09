@@ -106,7 +106,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>shafreen/springboot-${project.artifactId}:${project.version}</name>
+						<name>shafreen/springboot-${project.artifactId}:0.0.1</name>
 					</image>
 					<pullPolicy>IF_NOT_PRESENT</pullPolicy>
 				</configuration>

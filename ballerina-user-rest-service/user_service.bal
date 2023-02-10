@@ -3,6 +3,7 @@ import ballerina/sql;
 import ballerina/mime;
 import ballerinax/mysql.driver as _;
 import ballerinax/mysql;
+import ballerina/log;
 import ballerinax/jaeger as _;
 
 configurable boolean moderate = ?;
@@ -22,11 +23,12 @@ service /social\-media on socialMediaListener {
 
     public function init() returns error? {
         self.socialMediaDb = check new (host = host, port = port, user = database_user, password = database_password);
-        self.sentimentEndpoint = check new("localhost:8088", 
+        self.sentimentEndpoint = check new("localhost:9099", 
             retryConfig = {
                 interval: 3
             }
         );
+        log:printInfo("Social media service started");
     }
     
     # Get all the users

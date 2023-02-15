@@ -1,6 +1,7 @@
 import ballerina/sql;
 import ballerina/time;
 import ballerina/constraint;
+import ballerina/http;
 
 type User record {|
     int id;

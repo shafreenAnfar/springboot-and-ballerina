@@ -1,3 +1,4 @@
+import ballerina/http;
 type Post record {|
     int id;
     string description;

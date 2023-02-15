@@ -5,6 +5,7 @@ import ballerinax/mysql.driver as _;
 import ballerinax/mysql;
 import ballerina/log;
 import ballerinax/jaeger as _;
+import ballerina/time;
 
 configurable boolean moderate = ?;
 configurable string database_user = ?;
@@ -44,10 +45,14 @@ service /social\-media on socialMediaListener {
     # 
     # + id - The user ID of the user to be retrived
     # + return - A specific user or error message
-    resource function get users/[int id]() returns User|error {
+    resource function get users/[int id]() returns User|UserNotFound|error {
         User|error result = self.socialMediaDb->queryRow(`SELECT * FROM social_media_database.user_details WHERE ID = ${id}`);
         if result is sql:NoRowsError {
-            return error UserNotFoundError("id: " + id.toString());
+            ErrorDetails errorDetails = buildErrorPayload(string `id: ${id}`, string `users/${id}/posts`);
+            UserNotFound userNotFound = {
+                body: errorDetails
+            };
+            return userNotFound;
         } else {
             return result;
         }
@@ -78,10 +83,14 @@ service /social\-media on socialMediaListener {
     # 
     # + id - The user ID for which posts are retrieved
     # + return - A list of posts or error message
-    resource function get users/[int id]/posts() returns Post[]|error {
+    resource function get users/[int id]/posts() returns Post[]|UserNotFound|error {
         User|error result = self.socialMediaDb->queryRow(`SELECT * FROM social_media_database.user_details WHERE id = ${id}`);
         if result is sql:NoRowsError {
-            return error UserNotFoundError("id: " + id.toString());
+            ErrorDetails errorDetails = buildErrorPayload(string `id: ${id}`, string `users/${id}/posts`);
+            UserNotFound userNotFound = {
+                body: errorDetails
+            };
+            return userNotFound;
         }
 
         stream<Post, sql:Error?> postStream = self.socialMediaDb->query(`SELECT id, description FROM social_media_database.post WHERE user_id = ${id}`);
@@ -94,10 +103,14 @@ service /social\-media on socialMediaListener {
     # 
     # + id - The user ID for which the post is created
     # + return - The created message or error message
-    resource function post users/[int id]/posts(@http:Payload NewPost newPost) returns http:Created|error {
+    resource function post users/[int id]/posts(@http:Payload NewPost newPost) returns http:Created|UserNotFound|PostForbidden|error {
         User|error result = self.socialMediaDb->queryRow(`SELECT * FROM social_media_database.user_details WHERE id = ${id}`);
         if result is sql:NoRowsError {
-            return error UserNotFoundError("id: " + id.toString());
+            ErrorDetails errorDetails = buildErrorPayload(string `id: ${id}`, string `users/${id}/posts`);
+            UserNotFound userNotFound = {
+                body: errorDetails
+            };
+            return userNotFound;
         }
 
         Sentiment sentiment = check self.sentimentEndpoint->/text\-processing/api/sentiment.post(
@@ -105,7 +118,11 @@ service /social\-media on socialMediaListener {
             mediatype = mime:APPLICATION_FORM_URLENCODED
         );
         if sentiment.label == "neg" {
-            return error NegativeSentimentError("Negative sentiment detected");
+            ErrorDetails errorDetails = buildErrorPayload(string `id: ${id}`, string `users/${id}/posts`);
+            PostForbidden postForbidden = {
+                body: errorDetails
+            };
+            return postForbidden;
         }
 
         _ = check self.socialMediaDb->execute(`
@@ -113,4 +130,13 @@ service /social\-media on socialMediaListener {
             VALUES (${newPost.description}, ${id});`);
         return http:CREATED;
     }
+}
+
+function buildErrorPayload(string msg, string path) returns ErrorDetails {
+    ErrorDetails errorDetails = {
+        message: msg,
+        timeStamp: time:utcNow(),
+        details: string `uri=${path}`
+    };
+    return errorDetails;
 }

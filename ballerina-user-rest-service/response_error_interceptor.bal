@@ -2,57 +2,34 @@ import ballerina/time;
 import ballerina/http;
 import ballerina/constraint;
 
+// Handle listener errors
 service class ResponseErrorInterceptor {
     *http:ResponseErrorInterceptor;
 
-    remote function interceptResponseError(error err) 
-            returns UserNotFound|UserBadRequest|PostForbidden|UserInternalServerError {
-        ErrorDetails errorDetails = {
-            timeStamp: time:utcNow(), 
-            message: err.message(), 
-            details: ""
-        };
+    remote function interceptResponseError(http:RequestContext ctx, error err) 
+            returns SocialMediaBadReqeust|SocialMediaServerError {
+        ErrorDetails errorDetails = buildErrorPayload(err.message(), "");
         
-        if err is UserNotFoundError {
-            UserNotFound userNotFound = {
+        if err is constraint:Error {
+            SocialMediaBadReqeust socialMediaBadRequest = {
                 body: errorDetails
             };
-            return userNotFound;
-        } else if err is NegativeSentimentError {
-            PostForbidden postForbidden = {
-                body: errorDetails
-            };
-            return postForbidden;
-        } else if err is constraint:Error {
-            UserBadRequest userBadRequest = {
-                body: errorDetails
-            };
-            return userBadRequest;
+            return socialMediaBadRequest;
         } else {
-            UserInternalServerError userInternalServerError = {
+            SocialMediaServerError socialMediaServerError = {
                 body: errorDetails
             };
-            return userInternalServerError;
+            return socialMediaServerError;
         }
     }
 }
 
-type UserNotFound record {|
-    *http:NotFound;
-    ErrorDetails body;
-|};
-
-type UserBadRequest record {|
+type SocialMediaBadReqeust record {|
     *http:BadRequest;
     ErrorDetails body;
 |};
 
-type PostForbidden record {|
-    *http:Forbidden;
-    ErrorDetails body;
-|};
-
-type UserInternalServerError record {|
+type SocialMediaServerError record {|
     *http:InternalServerError;
     ErrorDetails body;
 |};

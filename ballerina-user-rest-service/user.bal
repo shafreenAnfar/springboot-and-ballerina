@@ -16,3 +16,8 @@ type NewUser record {|
     string name;
     time:Date birthDate;
 |};
+
+type UserNotFound record {|
+    *http:NotFound;
+    ErrorDetails body;
+|};

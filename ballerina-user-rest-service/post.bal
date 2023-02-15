@@ -6,3 +6,8 @@ type Post record {|
 type NewPost record {|
     string description;
 |};
+
+type PostForbidden record {|
+    *http:Forbidden;
+    ErrorDetails body;
+|};

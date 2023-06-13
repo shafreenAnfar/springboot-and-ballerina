@@ -26,8 +26,7 @@ You can use the below docker compose commands.
 
 ## Spring boot (Reactive)
 You can use the below docker compose commands.
-1. docker compose -f springboot-docker-compose-db.yml up
-2. docker compose -f springboot-reactive-docker-compose.yml up
+1. docker compose -f springboot-reactive-docker-compose.yml up
 
 ## Ballerina
 You can use the below docker compose commands.

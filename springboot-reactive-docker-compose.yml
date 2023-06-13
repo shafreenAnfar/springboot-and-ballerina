@@ -2,14 +2,15 @@ version: '2.14.0'
 
 services:
   social-media:
-    image: 'shafreen/springboot-reactive-social-media:0.0.1'
-    ports:
-      - '8087:8087'
-    depends_on: 
-      - zipkin
-      - sentiment-analysis
-    network_mode: "host"
-  
+     image: 'shafreen/springboot-reactive-social-media:0.0.1'
+     ports:
+       - '8087:8087'
+     depends_on:
+       - zipkin
+       - sentiment-analysis
+       - mysql
+     network_mode: "host"
+
   sentiment-analysis:
     image: 'shafreen/springboot-sentiment-api:0.0.1'
     ports:
@@ -23,3 +24,20 @@ services:
     ports:
       - '9411:9411'
     network_mode: "host"
+
+  mysql:
+    image: 'mysql:8.0-debian'
+    ports:
+      - '3306:3306'
+    network_mode: "host"
+    environment:
+      - MYSQL_ROOT_PASSWORD=dummypassword
+      - MYSQL_DATABASE=social_media_database
+      - MYSQL_USER=social_media_user
+      - MYSQL_PASSWORD=dummypassword
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 20s
+        retries: 10
+    volumes:
+      - "./mysql/social_media_db.sql:/docker-entrypoint-initdb.d/1.sql"

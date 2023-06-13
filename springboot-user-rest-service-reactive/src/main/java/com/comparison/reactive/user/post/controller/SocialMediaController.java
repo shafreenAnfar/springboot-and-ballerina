@@ -8,6 +8,7 @@ import com.comparison.reactive.user.post.model.User;
 import com.comparison.reactive.user.post.repository.PostRepository;
 import com.comparison.reactive.user.post.repository.UserRepository;
 import com.comparison.reactive.user.post.sentiment.SentimentAnalysisClient;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -53,7 +54,9 @@ public class SocialMediaController {
                     content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = List.class)
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = User.class)
+                                    )
                             )
                     })
     })
@@ -134,7 +137,9 @@ public class SocialMediaController {
                     content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = List.class)
+                                    array = @ArraySchema(
+                                            schema = @Schema(implementation = Post.class)
+                                    )
                             )
                     }),
             @ApiResponse(

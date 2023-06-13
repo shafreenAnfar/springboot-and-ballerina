@@ -1,0 +1,25 @@
+version: '2.14.0'
+
+services:
+  social-media:
+    image: 'shafreen/springboot-reactive-social-media:0.0.1'
+    ports:
+      - '8087:8087'
+    depends_on: 
+      - zipkin
+      - sentiment-analysis
+    network_mode: "host"
+  
+  sentiment-analysis:
+    image: 'shafreen/springboot-sentiment-api:0.0.1'
+    ports:
+      - '8088:8088'
+    depends_on: 
+      - zipkin
+    network_mode: "host"
+
+  zipkin:
+    image: 'openzipkin/zipkin'
+    ports:
+      - '9411:9411'
+    network_mode: "host"

@@ -1,5 +1,6 @@
 package com.comparison.reactive.user.post.controller;
 
+import com.comparison.reactive.user.post.exception.ErrorDetails;
 import com.comparison.reactive.user.post.exception.NegativeSentimentException;
 import com.comparison.reactive.user.post.exception.UserNotFoundException;
 import com.comparison.reactive.user.post.model.Post;
@@ -7,6 +8,10 @@ import com.comparison.reactive.user.post.model.User;
 import com.comparison.reactive.user.post.repository.PostRepository;
 import com.comparison.reactive.user.post.repository.UserRepository;
 import com.comparison.reactive.user.post.sentiment.SentimentAnalysisClient;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/social-media/users")
@@ -39,11 +46,42 @@ public class SocialMediaController {
         this.sentimentAnalysisClient = sentimentAnalysisClient;
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Get users",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = List.class)
+                            )
+                    })
+    })
     @GetMapping
     public Flux<User> retrieveAllUsers() {
         return userRepository.findAll();
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Get user",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = User.class)
+                            )
+                    }),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorDetails.class)
+                            )
+                    })
+    })
     @GetMapping("/{id}")
     public Mono<User> retrieveUser(@PathVariable long id) {
         return userRepository
@@ -53,6 +91,25 @@ public class SocialMediaController {
                 );
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Create user",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json"
+                            )
+                    }),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad request",
+                    content = {
+                        @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class)
+                        )
+                    })
+    })
     @PostMapping
     public Mono<ResponseEntity<Void>> createUser(@Valid @RequestBody User user) {
         return userRepository
@@ -60,6 +117,9 @@ public class SocialMediaController {
                 .map(savedUser -> ResponseEntity.created(null).build());
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Delete user")
+    })
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> deleteUser(@PathVariable long id) {
         return userRepository
@@ -67,6 +127,26 @@ public class SocialMediaController {
                 .map(v -> ResponseEntity.noContent().build());
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Get user posts",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = List.class)
+                            )
+                    }),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorDetails.class)
+                            )
+                    })
+    })
     @GetMapping("/{id}/posts")
     public Flux<Post> retrieveUserPosts(@PathVariable long id) {
         return userRepository
@@ -76,6 +156,34 @@ public class SocialMediaController {
                 ).flatMapMany(user -> postRepository.findPostForUser(id));
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Create user post",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json"
+                            )
+                    }),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = {
+                        @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDetails.class)
+                        )
+                    }),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad request",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorDetails.class)
+                            )
+                    })
+    })
     @PostMapping("/{id}/posts")
     public Mono<ResponseEntity<Void>> createUserPost(@PathVariable int id, @Valid @RequestBody Post post) {
         return userRepository

@@ -24,13 +24,18 @@ You can use the below docker compose commands.
 1. docker compose -f springboot-docker-compose-db.yml up
 2. docker compose -f springboot-docker-compose.yml up
 
+## Spring boot (Reactive)
+You can use the below docker compose commands.
+1. docker compose -f springboot-docker-compose-db.yml up
+2. docker compose -f springboot-reactive-docker-compose.yml up
+
 ## Ballerina
 You can use the below docker compose commands.
 1. docker compose -f ballerina-docker-compose-db.yml up
 2. docker compose -f ballerina-docker-compose.yml up
 
 # Try out
-## Spring boot
+## Spring boot (Default and Reactive)
 - To send request open `springboot-social-media.http` file using VS Code with `REST Client` extension
 - Zipkin URL - http://localhost:9411/zipkin/
 ## Ballerina

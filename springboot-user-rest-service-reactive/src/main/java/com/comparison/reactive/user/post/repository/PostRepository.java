@@ -6,5 +6,6 @@ import reactor.core.publisher.Mono;
 
 public interface PostRepository {
     Flux<Post> findPostForUser(long userId);
+
     Mono<Post> save(long userId, Post post);
 }

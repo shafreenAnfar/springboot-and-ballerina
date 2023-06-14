@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Id;
 public class Post {
     @Id
     private long id;
-
     private String description;
 
     public long getId() {
